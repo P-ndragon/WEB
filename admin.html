@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrador de Productos</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container mt-5">
+    <h1 class="text-center">Administrador de Productos</h1>
+
+    <!-- Alert para mostrar mensajes de éxito o error -->
+    <div id="alert-message" class="alert d-none"></div>
+
+    <!-- Formulario para agregar o actualizar productos -->
+    <form id="product-form" class="mb-5">
+      <input type="hidden" id="product-id">
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="nombre_producto">Nombre del Producto</label>
+          <input type="text" class="form-control" id="nombre_producto" placeholder="Nombre del Producto" required>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="precio_producto">Precio del Producto</label>
+          <input type="number" step="0.01" class="form-control" id="precio_producto" placeholder="Precio del Producto" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea class="form-control" id="descripcion" rows="3" placeholder="Descripción del Producto" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="archivo">Archivo</label>
+        <input type="file" class="form-control-file" id="archivo" accept="image/*">
+      </div>
+      <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+
+    <!-- Contenedor para mostrar productos -->
+    <div id="productos-container" class="row"></div>
+  </div>
+
+  <!-- jQuery (required for AJAX) -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <!-- Bootstrap JS -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      function loadProducts() {
+        $.ajax({
+          url: 'adminAPI.php',
+          type: 'GET',
+          dataType: 'json',
+          success: function(data) {
+            var productosHTML = '';
+            if (data.length > 0) {
+              $.each(data, function(index, producto) {
+                productosHTML += '<div class="col-md-4 mb-4">';
+                productosHTML += '<div class="card">';
+                if (producto.archivo) {
+                  productosHTML += '<img src="data:image/jpeg;base64,' + producto.archivo + '" class="card-img-top" alt="...">';
+                }
+                productosHTML += '<div class="card-body">';
+                productosHTML += '<h5 class="card-title">' + producto.nombre_producto + '</h5>';
+                productosHTML += '<p class="card-text">' + producto.descripcion + '</p>';
+                productosHTML += '<p class="card-text">' + producto.precio_producto + '</p>';
+                productosHTML += '<button class="btn btn-warning btn-edit" data-id="' + producto.id_producto + '">Editar</button> ';
+                productosHTML += '<button class="btn btn-danger btn-delete" data-id="' + producto.id_producto + '">Eliminar</button>';
+                productosHTML += '</div>';
+                productosHTML += '</div>';
+                productosHTML += '</div>';
+              });
+              $('#productos-container').html(productosHTML);
+            } else {
+              $('#productos-container').html('<p>No se encontraron productos.</p>');
+            }
+          },
+          error: function(xhr, status, error) {
+            console.error('Error al llamar a la API:', error);
+          }
+        });
+      }
+
+      $('#product-form').submit(function(event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+        var id_producto = $('#product-id').val();
+        var url = 'adminAPI.php' + (id_producto ? '?id=' + id_producto : '');
+        var method = id_producto ? 'PUT' : 'POST';
+
+        $.ajax({
+          url: url,
+          type: method,
+          data: formData,
+          processData: false,
+          contentType: false,
+          dataType: 'json',
+          success: function(response) {
+            var alertMessage = $('#alert-message');
+            if (response.status === 1) {
+              loadProducts();
+              $('#product-form')[0].reset();
+              $('#product-id').val('');
+              alertMessage.removeClass('d-none alert-danger').addClass('alert-success').text('Producto guardado con éxito.');
+            } else {
+              alertMessage.removeClass('d-none alert-success').addClass('alert-danger').text('Error: ' + response.error);
+            }
+            setTimeout(function() {
+              alertMessage.addClass('d-none');
+            }, 3000);
+          },
+          error: function(xhr, status, error) {
+            var alertMessage = $('#alert-message');
+            alertMessage.removeClass('d-none alert-success').addClass('alert-danger').text('Error al llamar a la API: ' + error);
+            setTimeout(function() {
+              alertMessage.addClass('d-none');
+            }, 3000);
+          }
+        });
+      });
+
+      $(document).on('click', '.btn-edit', function() {
+        var id = $(this).data('id');
+        $.get('adminAPI.php', { id: id }, function(producto) {
+          if (producto) {
+            $('#product-id').val(producto.id_producto);
+            $('#nombre_producto').val(producto.nombre_producto);
+            $('#precio_producto').val(producto.precio_producto);
+            $('#descripcion').val(producto.descripcion);
+          }
+        }, 'json');
+      });
+
+      $(document).on('click', '.btn-delete', function() {
+        var id = $(this).data('id');
+        $.ajax({
+          url: 'adminAPI.php?id=' + id,
+          type: 'DELETE',
+          dataType: 'json',
+          success: function(response) {
+            var alertMessage = $('#alert-message');
+            if (response.status === 1) {
+              loadProducts();
+              alertMessage.removeClass('d-none alert-danger').addClass('alert-success').text('Producto eliminado con éxito.');
+            } else {
+              alertMessage.removeClass('d-none alert-success').addClass('alert-danger').text('Error: ' + response.error);
+            }
+            setTimeout(function() {
+              alertMessage.addClass('d-none');
+            }, 3000);
+          },
+          error: function(xhr, status, error) {
+            var alertMessage = $('#alert-message');
+            alertMessage.removeClass('d-none alert-success').addClass('alert-danger').text('Error al llamar a la API: ' + error);
+            setTimeout(function() {
+              alertMessage.addClass('d-none');
+            }, 3000);
+          }
+        });
+      });
+
+      loadProducts();
+    });
+  </script>
+</body>
+</html>

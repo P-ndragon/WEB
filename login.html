@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .navbar-custom {
+      background-color: #2C3E50; /* Cambia el color de fondo de la barra de navegación */
+    }
+    .navbar-custom .navbar-brand,
+    .navbar-custom .nav-link {
+      color: #FFFFFF; /* Cambia el color del texto y los enlaces a blanco */
+    }
+    .logo-container img {
+      width: 30px; /* Ajusta el tamaño del logo */
+      height: auto;
+    }
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+    }
+    .navbar-brand img {
+      margin-right: 10px;
+    }
+    .section {
+      padding: 60px 0;
+    }
+    .carousel-item img {
+      max-height: 400px;
+      object-fit: cover;
+      margin: auto;
+    }
+    .navbar-nav .nav-link {
+      margin-right: 15px;
+    }
+    .map-container {
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-custom shadow-sm">
+    <a class="navbar-brand" href="#">
+      <img src="logosi.jpg" alt="Logo" style="width: 30px; height: auto;">
+      Óptica San José
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="pagina_principal.html">Inicio <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="catalogo.html">Catálogo</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Agenda tu cita</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="login.html">Login</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <center><img src="logosi.jpg" alt=""></center>
+  
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h4>Login</h4>
+          </div>
+          <div class="card-body">
+            <form>
+              <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" class="form-control" id="email" placeholder="Enter email">
+              </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Password">
+              </div>
+              <button type="submit" class="btn btn-primary btn-block">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS (optional, if you need JavaScript features) -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
